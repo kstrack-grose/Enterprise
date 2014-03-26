@@ -9,6 +9,8 @@
 #If rehearsal is more than 5 hours, there must be a meal break
 #of at least 1 hour.
 
+#Right now I'm working on figuring out timedelta.
+
 #imports:
 import time
 import datetime
