@@ -4,10 +4,8 @@
 #Purpose of Educational Hangman:  to play the classic Hangman game
 #but to avoid being bored by all of the ubiquitous, simplistic words
 
-#current bug:  guesses longer than 1 character
-
-#next challenge: make the dictionary a dictionary and 
-#print out word definitions at the end of the game
+#current bug: I know all of the commented-out words exist
+#but I was having trouble finding them on OED online.
 
 #code checked against Michael Dawson's
 
