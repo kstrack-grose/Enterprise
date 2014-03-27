@@ -47,7 +47,9 @@ alleviated through rightly directed human effort; a policy embodying this doctri
 b. Of a person, wit, etc.: penetrating; perceptive, discerning.'''
 , 
 "optative":"Having the function of expressing wish or desire.", 
-"pugnacious":"Eager or quick to quarrel or fight; given to fighting or arguing; belligerent, contentious.", 
+"pugnacious":'''Eager or quick to quarrel or fight; given to 
+fighting or arguing; belligerent, contentious.'''
+, 
 "isabelline":"Of an Isabella colour, greyish yellow.", 
 "redamation":"The action of loving someone in return.", 
 "columbine":'''a. Of, belonging to, or of the nature of, a dove or pigeon.
@@ -144,7 +146,7 @@ is the hangman's parting whisper.'''
 if word == progress:
 	print '''\nYour laudable cerebration has procured your freedom!
 You hasten away from the mortiferous hangman and his noose,
-secure in the knowledge that the word is''', word, "/b."
+secure in the knowledge that the word is''', word, "\b."
 	print ""
 	print "'Do you even know what that means?' The hangman shouts\nback at you, a paltry attempt at a parting blow."
 	print "Of course you do.  Of course you know that", word, "means:"
