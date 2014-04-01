@@ -9,11 +9,11 @@
 #If rehearsal is more than 5 hours, there must be a meal break
 #of at least 1 hour.
 
-#Right now I'm working on figuring out timedelta.
-
 #imports:
 import time
 import datetime
+from datetime import datetime
+from datetime import timedelta
 
 #FUNCTIONS
 	#DAY FUNCTION
@@ -23,7 +23,7 @@ def day():
 		dprompt = "0"+dprompt 
 	while dprompt.isalnum() and not dprompt.isdigit() or len(dprompt) > 2 or int(dprompt) < 1 or int(dprompt) > 31:
 		dprompt = raw_input("Please try again: ") 
-	day = dprompt 
+	day = int(dprompt) 
 	return day
 
 	#HOUR FUNCTION
@@ -39,18 +39,16 @@ def hour():
 	hprompt = int(hprompt) #to convert to 24 hour clock system
 	ampm = raw_input("AM or PM? ")
 	ampm = ampm.upper()
-	if ampm == "AM" and hprompt != 12:
-		hprompt = str(hprompt) #no need to add hours but do need to convert back to string
-	if ampm == "PM" and hprompt != 12:
-		hprompt = str(hprompt + 12) 
-	if ampm == "PM" and hprompt == 12:
-		ampm == "12" #NOON 
-	while ampm == "AM" and hprompt == 12:  #if midnight
-		print "Please do not enter midnight exactly.\nA minute ahead or behind will give \n a good approximate."
-		hprompt = raw_input("Hour: ")
-	while ampm.isalnum() and not ampm.isalpha() or len(ampm) < 2 or len(ampm) > 2:
-		hprompt = raw_input("Please try again: ")
-	hour =  str(hprompt)
+	if ampm == "AM" and hprompt == 12:
+		hprompt == 00 #midnight
+	if ampm == "PM":
+		if hprompt != 12:
+			hprompt = hprompt + 12 
+		else:
+			hprompt == "12" #NOON 
+	while ampm != "PM" and ampm != "AM":
+		ampm = raw_input("Please try AM/PM again: ").upper()
+	hour =  int(hprompt)
 	return hour
 
 	#MINUTE FUNCTION
@@ -62,34 +60,78 @@ def minute():
 		mprompt = raw_input("Please try again: ")
 	while mprompt.isalnum() and not mprompt.isdigit() or len(mprompt) > 2:
 		mprompt = raw_input("Please try again:  ")	
-	minute = mprompt
+	minute = int(mprompt)
 	return minute
 
-
-
+	#5/55 function--I'm wondering how to make a while loop save each iteration in a different variable...
+# def 5out55(starttime, endtime):
+#	timeCursor = starttime
+#	while timeCursor <= (endtime - timedelta(minutes = 55)):
+		
+#VARIABLES
+it = ""                                                                 # 'it' is for iteration.
+arun = timedelta(0, 0, 0, 0, 55)                                      # runtime for 5/55
+abreak = timedelta(0, 0, 0, 0, 5)                                     # breaktime for 5/55
+brun = timedelta(0, 0, 0, 0, 80)                                      # runtime for 10/80
+bbreak = timedelta(0, 0, 0, 0, 10)                                    # breaktime for 10/80
 
 #WELCOME MESSAGE HERE
 
+
+now = datetime.now() #sets current dates 
+
 print "Please enter the rehearsal start time."	
+	#datetime for start:
+start =  datetime(now.year, now.month, day(), hour(), minute())          
+#start = datetime(now.year, now.month, 1, 12, 00)
 
-	#concatenate start:
-start = day() + " " + hour() + " " + minute()
+print "\nPlease enter the rehearsal end time:"
+	#datetime for end:
+end = datetime(now.year, now.month, day(), hour(), minute())             
+#end = datetime(now.year, now.month, 1, 16, 30)
 
-	#concatenate end:
-print "Please enter the rehearsal end time:"
-end = day() + " " + hour() + " " + minute()
+#confirm start/end times with user:
+print "\nPlease confirm your rehearsal's start time:"
+print start
+startChoice = raw_input("Was that correct?  Yes or no: ")                
+if startChoice.lower()[0] == "n":
+ 	print "\nPlease enter your start time again. \n"
+	start =  datetime(now.year, now.month, day(), hour(), minute()) 
+#^basically start from beginning of start inputs
 
-starttime = time.strptime(start, "%d %H %M")
-endtime = time.strptime(end, "%d %H %M")
+
+print "\nPlease confirm your rehearsal's end time:"
+print end
+endChoice = raw_input("Was that correct?  Yes or no: ")                
+if endChoice.lower()[0] == "n":
+	print "\nPlease enter your end time again. \n"
+	end = datetime(now.year, now.month, day(), hour(), minute()) 
+#^basically start from beginning of end inputs
 
 
 #break times BIAS
-print "In general, would you prefer to break a) 5 minutes every 55 minutes \n or b) 10 minutes every 80 minues?"
+print "\nIn general, would you prefer to break \na) 5 minutes every 55 minutes \nor \nb) 10 minutes every 80 minutes? \n"
 bias = raw_input("a or b: ")
 bias = bias.lower()
 
-print "start:", start
-print "end:", end
+totalDelta = end - start
+totalMin = totalDelta.total_seconds()//60
+print "total delta", totalDelta
+print "total min", totalMin
 
-delta = starttime - endtime
-print delta
+
+nowTime = start
+print "nowTime =", start
+
+#NOW BEGINS THE THREE OPTIONS BY MEAL BREAK
+#first one: if rehearsal <= 5 hours
+#help just none of this works
+
+#if totalMin < 300:
+#	if bias == 'a':
+		
+
+
+
+#	if bias == 'b':
+#		print "Sorry, I'm not there yet!"
