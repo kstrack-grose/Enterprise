@@ -135,3 +135,32 @@ print "nowTime =", start
 
 #	if bias == 'b':
 #		print "Sorry, I'm not there yet!"
+
+
+if 300 <= totalMin < 600:
+	halfway = (end - start)/2 + start
+	startmeal = halfway - timedelta(0, 0, 0, 0, 30)
+	endmeal = halfway + timedelta(0, 0, 0, 0, 30)
+	print "\nYour meal break will be from", startmeal, "to", endmeal
+	
+	#and then do the iterative thing based on bias, 
+	#running from start to startmeal and from endmeal to end
+
+if 600 <= totalMin <900:
+	third = (end - start)/3 + start
+	startmeal1 = third - timedelta(0, 0, 0, 0, 30)
+	endmeal1 = third + timedelta(0, 0, 0, 0, 30)
+	print "\nYour first meal break will be from", startmeal1, "to", endmeal1 
+	secondThird = (2*(end-start))/3 + start
+	startmeal2 = third - timedelta(0, 0, 0, 0, 30)
+	endmeal2 = third + timedelta(0, 0, 0, 0, 30)
+	print "\nYour second meal break will be from", startmeal2, "to", endmeal2 
+	#again, iterative thing for all of the in between times
+
+if totalMin >= 900:
+	print "AEA guidelines do not permit rehearsals that run that long."
+
+
+
+
+
