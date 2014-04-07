@@ -9,6 +9,12 @@
 #If rehearsal is more than 5 hours, there must be a meal break
 #of at least 1 hour.
 
+#current bug:
+#getting time after first meal (or second meal, probably
+#to start at the end of the meal
+#rather than the beginning of the rehearsal
+
+
 #imports:
 import time
 import datetime
@@ -63,46 +69,88 @@ def minute():
 	minute = int(mprompt)
 	return minute
 
+	#how to divide between meal breaks
+def timeToChunk(begin, stop):
+	partialDelta = stop - begin
+	partialMin = partialDelta.total_seconds()/60
+	partialHours = partialMin/60
+	intHours = int(partialHours//1)
+	#checking in:
+	print "checking in:"
+	print "total delta", partialDelta
+	print "total min", partialMin
+	print "total hours", partialHours
+	print "hours as an integer", intHours
+	#and return intHours, so I can use it in the range
+	return intHours
+
+	#iterate through on a 5/55 basis
+def iterateA(begin, stop):
+	for x in range(0, timeToChunk(begin, stop)):
+    		times.append("")
+       		begin = begin + arun        
+		times.append(["Start of break is", begin.strftime('%d, %r')])
+        	begin = begin + abreak
+       		times.append(["End of break is", begin.strftime('%d, %r')])
+	for y in range(0, len(times)):
+	        print times[y]
+
+	#iterate through on a 10/80 basis
+def iterateB(begin, stop):
+	for x in range(0, timeToChunk(begin, stop)):
+		times.append("")
+		begin = begin + brun
+		times.append(["Start of break is", begin.strftime('%d, %r')])
+		begin = begin + bbreak
+		times.append(["End of break is", begin.strftime('%d, %r')])
+	for y in range(0, len(times)):
+	        print times[y]
+
+
 	#5/55 function--I'm wondering how to make a while loop save each iteration in a different variable...
 # def 5out55(starttime, endtime):
 #	timeCursor = starttime
 #	while timeCursor <= (endtime - timedelta(minutes = 55)):
 		
-#VARIABLES
-it = ""                                                                 # 'it' is for iteration.
+#VARIABLES and lists
+times = [] 							      # list to hold breaks
+arun = timedelta(0, 0, 0, 0, 55)                                      # runtime for 5/55
+abreak = timedelta(0, 0, 0, 0, 5)                                     # breaktime for 5/55
+brun = timedelta(0, 0, 0, 0, 80)                                      # runtime for 10/80
+bbreak = timedelta(0, 0, 0, 0, 10)                                    # breaktime for 10/80
 
+now = datetime.now() #sets current dates 
 
 #WELCOME MESSAGE HERE
 
 
-now = datetime.now() #sets current dates 
 
 print "Please enter the rehearsal start time."	
 	#datetime for start:
-# start =  datetime(now.year, now.month, day(), hour(), minute())           ADD BACK IN
-start = datetime(now.year, now.month, 1, 12, 00)
+start =  datetime(now.year, now.month, day(), hour(), minute())          
+#start = datetime(now.year, now.month, 1, 12, 00)
 
 print "\nPlease enter the rehearsal end time:"
 	#datetime for end:
-# end = datetime(now.year, now.month, day(), hour(), minute())              ADD BACK IN
-end = datetime(now.year, now.month, 1, 16, 30)
+end = datetime(now.year, now.month, day(), hour(), minute())             
+#end = datetime(now.year, now.month, 1, 16, 30)
 
 #confirm start/end times with user:
 print "\nPlease confirm your rehearsal's start time:"
 print start
-# startChoice = raw_input("Was that correct?  Yes or no: ")                  ADD BACK IN vv
-# if startChoice.lower()[0] == "n":
-# 	print "\nPlease enter your start time again. \n"
-#	start =  datetime(now.year, now.month, day(), hour(), minute()) 
+startChoice = raw_input("Was that correct?  Yes or no: ")                
+if startChoice.lower()[0] == "n":
+ 	print "\nPlease enter your start time again. \n"
+	start =  datetime(now.year, now.month, day(), hour(), minute()) 
 #^basically start from beginning of start inputs
 
 
 print "\nPlease confirm your rehearsal's end time:"
 print end
-# endChoice = raw_input("Was that correct?  Yes or no: ")                  ADD BACK IN vv
-# if endChoice.lower()[0] == "n":
-#	print "\nPlease enter your end time again. \n"
-#	end = datetime(now.year, now.month, day(), hour(), minute()) 
+endChoice = raw_input("Was that correct?  Yes or no: ")                
+if endChoice.lower()[0] == "n":
+	print "\nPlease enter your end time again. \n"
+	end = datetime(now.year, now.month, day(), hour(), minute()) 
 #^basically start from beginning of end inputs
 
 
@@ -111,35 +159,79 @@ print "\nIn general, would you prefer to break \na) 5 minutes every 55 minutes \
 bias = raw_input("a or b: ")
 bias = bias.lower()
 
+#more variables:
 totalDelta = end - start
-totalMin = totalDelta.total_seconds()//60
-print "total delta", totalDelta
-print "total min", totalMin
+totalMin = totalDelta.total_seconds()/60
+totalHours = totalMin/60
+intHours = int(totalHours//1)
 
 
-nowTime = start
-print "nowTime =", start
+#note: WHEN YOU MADE TIMETOCHUNK A FUNCTION, YOU REMOVED NOWTIME FROM IT. DO THAT INDIVIDUALLY.
 
 #NOW BEGINS THE THREE OPTIONS BY MEAL BREAK
 #first one: if rehearsal <= 5 hours
-#help just none of this works
 
 if totalMin < 300:
+	begin = start
+	stop = end
+	#if 5/55 preference:
 	if bias == 'a':
-		while start < end:
-			it += 's' 				        # s for start                              
-#the idea here is to create a self-accruing variable that can store as many runs of the while loop as it needs to.
-#shit wait no it's not going to work.			
-			run = datetime.timedelta(minutes = 55)
-			nowtime = nowtime + run
-			print nowtime                           #TAKE OUT LATER			
-			it += 'e'					# e for end
-			pause = datetime.timedelta(minutes = 5)				
-			nowtime = nowtime + pause
-			print nowtime                           #TAKE OUT LATER			
-
-
-
-
+		iterateA(begin, stop)
+		#^^this calls the iterate function and prints all of the break times
 	if bias == 'b':
-		print "Sorry, I'm not there yet!"
+		iterateB(begin, stop)
+
+
+if 300 <= totalMin < 600:
+	#MEAL
+	halfway = (end - start)/2 + start
+	startmeal = halfway - timedelta(0, 0, 0, 0, 30)
+	endmeal = halfway + timedelta(0, 0, 0, 0, 30)
+	#aaand call iterate functions for before meal
+	if bias == 'a':
+		iterateA(start, startmeal)
+	if bias == 'b':
+		iterateB(start, startmeal)
+	print "\nYour meal break will be from", startmeal, "to", endmeal
+	#iterate
+	if bias == 'a':
+		iterateA(endmeal, end)
+	if bias == 'b':
+		iterateB(endmeal, end)
+
+
+if 600 <= totalMin <900:
+	#TWO MEALS
+	third = (end - start)/3 + start
+	startmeal1 = third - timedelta(0, 0, 0, 0, 30)
+	endmeal1 = third + timedelta(0, 0, 0, 0, 30)
+	#iterate
+	if bias == 'a':
+		iterateA(start, startmeal1)
+	if bias == 'b':
+		iterateB(start, startmeal1)
+	#mealbreak!
+	print "\nYour first meal break will be from", startmeal1, "to", endmeal1 
+	secondThird = (2*(end-start))/3 + start
+	startmeal2 = third - timedelta(0, 0, 0, 0, 30)
+	endmeal2 = third + timedelta(0, 0, 0, 0, 30)
+	#iterate
+	if bias == 'a':
+		iterateA(endmeal1, startmeal2)
+	if bias == 'b':
+		iterateB(endmeal1, startmeal2)
+	#mealbreak!
+	print "\nYour second meal break will be from", startmeal2, "to", endmeal2 
+	#iterate
+	if bias == 'a':
+		iterateA(endmeal2, end)
+	if bias == 'b':
+		iterateB(endmeal2, end)
+
+if totalMin >= 900:
+	print "AEA guidelines do not permit rehearsals to run that long."
+
+
+
+
+
