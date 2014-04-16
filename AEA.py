@@ -10,10 +10,7 @@
 #of at least 1 hour.
 
 #current bug:
-#getting time after first meal (or second meal, probably
-#to start at the end of the meal
-#rather than the beginning of the rehearsal
-
+#the while loop in AorB() is glitching
 
 #imports:
 import time
@@ -69,48 +66,31 @@ def minute():
 	minute = int(mprompt)
 	return minute
 
+def AorB():
+	print "\nIn general, would you prefer to break \na) 5 minutes every 55 minutes \nor \nb) 10 minutes every 80 minutes? \n"
+	bias = raw_input("a or b: ").lower()
+#	while bias != "a" and bias != "b":
+#		bias = raw_input("Try again. a or b: ").lower
+# 	^^ is currently not working for some unknown reason
+	return bias
+
 	#how to divide between meal breaks
-def timeToChunk(begin, stop):
+def timeToChunkA(begin, stop):
 	partialDelta = stop - begin
 	partialMin = partialDelta.total_seconds()/60
 	partialHours = partialMin/60
 	intHours = int(partialHours//1)
-	#checking in:
-	print "checking in:"
-	print "total delta", partialDelta
-	print "total min", partialMin
-	print "total hours", partialHours
-	print "hours as an integer", intHours
 	#and return intHours, so I can use it in the range
 	return intHours
 
-	#iterate through on a 5/55 basis
-def iterateA(begin, stop):
-	for x in range(0, timeToChunk(begin, stop)):
-    		times.append("")
-       		begin = begin + arun        
-		times.append(["Start of break is", begin.strftime('%d, %r')])
-        	begin = begin + abreak
-       		times.append(["End of break is", begin.strftime('%d, %r')])
-	for y in range(0, len(times)):
-	        print times[y]
+def timeToChunkB(begin, stop):
+	partialDelta = stop - begin
+	partialMin = partialDelta.total_seconds()/60
+	partialChunks = partialMin/90
+	intChunks = int(partialChunks//1)
+	#return intChunks (they're 90 minutes, not hours) to use in range
+	return intChunks
 
-	#iterate through on a 10/80 basis
-def iterateB(begin, stop):
-	for x in range(0, timeToChunk(begin, stop)):
-		times.append("")
-		begin = begin + brun
-		times.append(["Start of break is", begin.strftime('%d, %r')])
-		begin = begin + bbreak
-		times.append(["End of break is", begin.strftime('%d, %r')])
-	for y in range(0, len(times)):
-	        print times[y]
-
-
-	#5/55 function--I'm wondering how to make a while loop save each iteration in a different variable...
-# def 5out55(starttime, endtime):
-#	timeCursor = starttime
-#	while timeCursor <= (endtime - timedelta(minutes = 55)):
 		
 #VARIABLES and lists
 times = [] 							      # list to hold breaks
@@ -128,18 +108,16 @@ now = datetime.now() #sets current dates
 print "Please enter the rehearsal start time."	
 	#datetime for start:
 start =  datetime(now.year, now.month, day(), hour(), minute())          
-#start = datetime(now.year, now.month, 1, 12, 00)
 
 print "\nPlease enter the rehearsal end time:"
 	#datetime for end:
 end = datetime(now.year, now.month, day(), hour(), minute())             
-#end = datetime(now.year, now.month, 1, 16, 30)
 
 #confirm start/end times with user:
 print "\nPlease confirm your rehearsal's start time:"
 print start
 startChoice = raw_input("Was that correct?  Yes or no: ")                
-if startChoice.lower()[0] == "n":
+if startChoice.lower()[0] != "y":
  	print "\nPlease enter your start time again. \n"
 	start =  datetime(now.year, now.month, day(), hour(), minute()) 
 #^basically start from beginning of start inputs
@@ -148,23 +126,20 @@ if startChoice.lower()[0] == "n":
 print "\nPlease confirm your rehearsal's end time:"
 print end
 endChoice = raw_input("Was that correct?  Yes or no: ")                
-if endChoice.lower()[0] == "n":
+if endChoice.lower()[0] != "y":
 	print "\nPlease enter your end time again. \n"
 	end = datetime(now.year, now.month, day(), hour(), minute()) 
 #^basically start from beginning of end inputs
 
-
-#break times BIAS
-print "\nIn general, would you prefer to break \na) 5 minutes every 55 minutes \nor \nb) 10 minutes every 80 minutes? \n"
-bias = raw_input("a or b: ")
-bias = bias.lower()
+bias = AorB()
 
 #more variables:
 totalDelta = end - start
 totalMin = totalDelta.total_seconds()/60
 totalHours = totalMin/60
 intHours = int(totalHours//1)
-
+times.append("")
+times.append(["Start of rehearsal is", start.strftime('%d, %r')])
 
 #note: WHEN YOU MADE TIMETOCHUNK A FUNCTION, YOU REMOVED NOWTIME FROM IT. DO THAT INDIVIDUALLY.
 
@@ -174,64 +149,161 @@ intHours = int(totalHours//1)
 if totalMin < 300:
 	begin = start
 	stop = end
-	#if 5/55 preference:
 	if bias == 'a':
-		iterateA(begin, stop)
-		#^^this calls the iterate function and prints all of the break times
+	        for x in range(0, timeToChunkA(begin, stop)):
+		        times.append("")
+               		begin = begin + arun
+                	times.append(["Start of break is", begin.strftime('%d, %r')])
+                	begin = begin + abreak
+                	times.append(["End of break is", begin.strftime('%d, %r')])
+			#^^adds beginnings and ends of breaks to a list to print out later
 	if bias == 'b':
-		iterateB(begin, stop)
+                for x in range(0, timeToChunkB(begin, stop)):
+                        times.append("")
+                        begin = begin + brun
+                        times.append(["Start of break is", begin.strftime('%d, %r')])
+                        begin = begin + bbreak
+                        times.append(["End of break is", begin.strftime('%d, %r')])
+			#^^ditto last comment
 
-
-if 300 <= totalMin < 600:
+if (300 <= totalMin) and (totalMin < 600):
 	#MEAL
 	halfway = (end - start)/2 + start
 	startmeal = halfway - timedelta(0, 0, 0, 0, 30)
 	endmeal = halfway + timedelta(0, 0, 0, 0, 30)
+	#set variables:
+	begin = start
+	stop = startmeal
 	#aaand call iterate functions for before meal
 	if bias == 'a':
-		iterateA(start, startmeal)
+                for x in range(0, timeToChunkA(begin, stop)):
+                        times.append("")
+                        begin = begin + arun
+                        times.append(["Start of break is", begin.strftime('%d, %r')])
+                        begin = begin + abreak
+                        times.append(["End of break is", begin.strftime('%d, %r')])
+                        #^^adds beginnings and ends of breaks to a list to print out later
 	if bias == 'b':
-		iterateB(start, startmeal)
-	print "\nYour meal break will be from", startmeal, "to", endmeal
+                for x in range(0, timeToChunkB(begin, stop)):
+                        times.append("")
+                        begin = begin + brun
+                        times.append(["Start of break is", begin.strftime('%d, %r')])
+                        begin = begin + bbreak
+                        times.append(["End of break is", begin.strftime('%d, %r')])
+                        #^^ditto last comment
+	times.append("")
+	times.append(["Start of meal break is", startmeal.strftime('%d, %r')])
+	times.append(["End of meal break is", endmeal.strftime('%d, %r')])
+	#reset variables
+	begin = endmeal
+	stop = end
 	#iterate
 	if bias == 'a':
-		iterateA(endmeal, end)
+                for x in range(0, timeToChunkA(begin, stop)):
+                        times.append("")
+                        begin = begin + arun
+                        times.append(["Start of break is", begin.strftime('%d, %r')])
+                        begin = begin + abreak
+                        times.append(["End of break is", begin.strftime('%d, %r')])
+                        #^^adds beginnings and ends of breaks to a list to print out later
 	if bias == 'b':
-		iterateB(endmeal, end)
+                for x in range(0, timeToChunkB(begin, stop)):
+                        times.append("")
+                        begin = begin + brun
+                        times.append(["Start of break is", begin.strftime('%d, %r')])
+                        begin = begin + bbreak
+                        times.append(["End of break is", begin.strftime('%d, %r')])
+                        #^^ditto last comment
 
 
-if 600 <= totalMin <900:
+if (600 <= totalMin) and (totalMin < 900):
 	#TWO MEALS
 	third = (end - start)/3 + start
 	startmeal1 = third - timedelta(0, 0, 0, 0, 30)
 	endmeal1 = third + timedelta(0, 0, 0, 0, 30)
+	#set variables
+	begin = start
+	stop = startmeal1
 	#iterate
 	if bias == 'a':
-		iterateA(start, startmeal1)
+                for x in range(0, timeToChunkA(begin, stop)):
+                        times.append("")
+                        begin = begin + arun
+                        times.append(["Start of break is", begin.strftime('%d, %r')])
+                        begin = begin + abreak
+                        times.append(["End of break is", begin.strftime('%d, %r')])
+                        #^^adds beginnings and ends of breaks to a list to print out later
 	if bias == 'b':
-		iterateB(start, startmeal1)
+                for x in range(0, timeToChunkB(begin, stop)):
+                        times.append("")
+                        begin = begin + brun
+                        times.append(["Start of break is", begin.strftime('%d, %r')])
+                        begin = begin + bbreak
+                        times.append(["End of break is", begin.strftime('%d, %r')])
+                        #^^ditto last comment
 	#mealbreak!
-	print "\nYour first meal break will be from", startmeal1, "to", endmeal1 
+        times.append("")
+        times.append(["Start of meal break is", startmeal1.strftime('%d, %r')])
+        times.append(["End of meal break is", endmeal1.strftime('%d, %r')])
+	#now, calculate second meal
 	secondThird = (2*(end-start))/3 + start
-	startmeal2 = third - timedelta(0, 0, 0, 0, 30)
-	endmeal2 = third + timedelta(0, 0, 0, 0, 30)
+	startmeal2 = secondThird - timedelta(0, 0, 0, 0, 30)
+	endmeal2 = secondThird + timedelta(0, 0, 0, 0, 30)
+	#and reset variables
+	begin = endmeal1
+	stop = startmeal2
 	#iterate
 	if bias == 'a':
-		iterateA(endmeal1, startmeal2)
+                for x in range(0, timeToChunkA(begin, stop)):
+                        times.append("")
+                        begin = begin + arun
+                        times.append(["Start of break is", begin.strftime('%d, %r')])
+                        begin = begin + abreak
+                        times.append(["End of break is", begin.strftime('%d, %r')])
+                        #^^adds beginnings and ends of breaks to a list to print out later
 	if bias == 'b':
-		iterateB(endmeal1, startmeal2)
+                for x in range(0, timeToChunkB(begin, stop)):
+                        times.append("")
+                        begin = begin + brun
+                        times.append(["Start of break is", begin.strftime('%d, %r')])
+                        begin = begin + bbreak
+                        times.append(["End of break is", begin.strftime('%d, %r')])
 	#mealbreak!
-	print "\nYour second meal break will be from", startmeal2, "to", endmeal2 
+        times.append("")
+        times.append(["Start of meal break is", startmeal2.strftime('%d, %r')])
+        times.append(["End of meal break is", endmeal2.strftime('%d, %r')])
+	#reset variables
+	begin = endmeal2
+	stop = end
 	#iterate
 	if bias == 'a':
-		iterateA(endmeal2, end)
+                for x in range(0, timeToChunkA(begin, stop)):
+                        times.append("")
+                        begin = begin + arun
+                        times.append(["Start of break is", begin.strftime('%d, %r')])
+                        begin = begin + abreak
+                        times.append(["End of break is", begin.strftime('%d, %r')])
+                        #^^adds beginnings and ends of breaks to a list to print out later
 	if bias == 'b':
-		iterateB(endmeal2, end)
+                for x in range(0, timeToChunkB(begin, stop)):
+                        times.append("")
+                        begin = begin + brun
+                        times.append(["Start of break is", begin.strftime('%d, %r')])
+                        begin = begin + bbreak
+                        times.append(["End of break is", begin.strftime('%d, %r')])
+
 
 if totalMin >= 900:
 	print "AEA guidelines do not permit rehearsals to run that long."
 
 
-
+	#CONCLUSION
+#add rehearsal end time to list
+times.append("")
+times.append(["End of rehearsal is", end.strftime('%d, %r')])
+#print out the entire list!
+for y in range(0, len(times)):
+	print times[y]
+print "Thank you for using Schedules. Have a good rehearsal!"
 
 
