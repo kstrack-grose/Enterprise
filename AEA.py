@@ -9,9 +9,6 @@
 #If rehearsal is more than 5 hours, there must be a meal break
 #of at least 1 hour.
 
-#current bug:
-#the while loop in AorB() is glitching
-
 #imports:
 import time
 import datetime
@@ -66,14 +63,6 @@ def minute():
 	minute = int(mprompt)
 	return minute
 
-def AorB():
-	print "\nIn general, would you prefer to break \na) 5 minutes every 55 minutes \nor \nb) 10 minutes every 80 minutes? \n"
-	bias = raw_input("a or b: ").lower()
-#	while bias != "a" and bias != "b":
-#		bias = raw_input("Try again. a or b: ").lower
-# 	^^ is currently not working for some unknown reason
-	return bias
-
 	#how to divide between meal breaks
 def timeToChunkA(begin, stop):
 	partialDelta = stop - begin
@@ -91,7 +80,30 @@ def timeToChunkB(begin, stop):
 	#return intChunks (they're 90 minutes, not hours) to use in range
 	return intChunks
 
-		
+	#enter all the times and check them
+def check(message):
+	while 1:
+		print "\nPlease enter the rehearsal %r time:" %message
+		time = datetime(now.year, now.month, day(), hour(), minute())          
+		print "\nPlease confirm the rehearsal %r time:" %message
+		print time.strftime('%d, %r')
+		choice = raw_input("Was that correct? Yes or no: ")
+		if choice == "y":
+			return time
+		else:
+			print "Try again."						
+
+def ab():
+	while 1:
+		bias = raw_input("a or b: ").lower()
+		if bias == "a":
+			return bias
+		elif bias == "b":
+			return bias	
+		else:
+			print "Try again."
+	#thanks to Scott Milliman and Erik Danishev for this technique
+
 #VARIABLES and lists
 times = [] 							      # list to hold breaks
 arun = timedelta(0, 0, 0, 0, 55)                                      # runtime for 5/55
@@ -101,37 +113,15 @@ bbreak = timedelta(0, 0, 0, 0, 10)                                    # breaktim
 
 now = datetime.now() #sets current dates 
 
-#WELCOME MESSAGE HERE
+#welcome message!
+print "\nWelcome to Schedules, the AEA-compliant break scheduler.\n"
 
+start = check("start")
+end = check("end")			
 
+#find 5/55 or 10/80 preference
+print "\nIn general, would you prefer to break \na) 5 minutes every 55 minutes \nor \nb) 10 minutes every 80 minutes? \n"
 
-print "Please enter the rehearsal start time."	
-	#datetime for start:
-start =  datetime(now.year, now.month, day(), hour(), minute())          
-
-print "\nPlease enter the rehearsal end time:"
-	#datetime for end:
-end = datetime(now.year, now.month, day(), hour(), minute())             
-
-#confirm start/end times with user:
-print "\nPlease confirm your rehearsal's start time:"
-print start
-startChoice = raw_input("Was that correct?  Yes or no: ")                
-if startChoice.lower()[0] != "y":
- 	print "\nPlease enter your start time again. \n"
-	start =  datetime(now.year, now.month, day(), hour(), minute()) 
-#^basically start from beginning of start inputs
-
-
-print "\nPlease confirm your rehearsal's end time:"
-print end
-endChoice = raw_input("Was that correct?  Yes or no: ")                
-if endChoice.lower()[0] != "y":
-	print "\nPlease enter your end time again. \n"
-	end = datetime(now.year, now.month, day(), hour(), minute()) 
-#^basically start from beginning of end inputs
-
-bias = AorB()
 
 #more variables:
 totalDelta = end - start
@@ -141,10 +131,14 @@ intHours = int(totalHours//1)
 times.append("")
 times.append(["Start of rehearsal is", start.strftime('%d, %r')])
 
-#note: WHEN YOU MADE TIMETOCHUNK A FUNCTION, YOU REMOVED NOWTIME FROM IT. DO THAT INDIVIDUALLY.
 
 #NOW BEGINS THE THREE OPTIONS BY MEAL BREAK
-#first one: if rehearsal <= 5 hours
+if totalMin >= 900:
+	print "AEA guidelines do not permit rehearsals to run that long."
+
+#now, call ab to find the preferences
+bias = ab()
+
 
 if totalMin < 300:
 	begin = start
@@ -165,6 +159,7 @@ if totalMin < 300:
                         begin = begin + bbreak
                         times.append(["End of break is", begin.strftime('%d, %r')])
 			#^^ditto last comment
+
 
 if (300 <= totalMin) and (totalMin < 600):
 	#MEAL
@@ -293,17 +288,15 @@ if (600 <= totalMin) and (totalMin < 900):
                         times.append(["End of break is", begin.strftime('%d, %r')])
 
 
-if totalMin >= 900:
-	print "AEA guidelines do not permit rehearsals to run that long."
-
 
 	#CONCLUSION
 #add rehearsal end time to list
 times.append("")
 times.append(["End of rehearsal is", end.strftime('%d, %r')])
-#print out the entire list!
 for y in range(0, len(times)):
 	print times[y]
+
+#print out the entire list!
 print "Thank you for using Schedules. Have a good rehearsal!"
 
 
