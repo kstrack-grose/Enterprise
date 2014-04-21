@@ -9,6 +9,8 @@
 #If rehearsal is more than 5 hours, there must be a meal break
 #of at least 1 hour.
 
+#current bug: obtaining user feedback and streamlining
+
 #imports:
 import time
 import datetime
@@ -118,6 +120,11 @@ print "\nWelcome to Schedules, the AEA-compliant break scheduler.\n"
 
 start = check("start")
 end = check("end")			
+
+if start > end:
+	print "Your end time was earlier than your start time.  Please try again."
+	start = check("start")
+	end = check("end")
 
 #find 5/55 or 10/80 preference
 print "\nIn general, would you prefer to break \na) 5 minutes every 55 minutes \nor \nb) 10 minutes every 80 minutes? \n"
