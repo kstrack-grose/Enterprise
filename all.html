@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link type="text/css" rel="stylesheet" href="static/style.css"/>
+<link href='http://fonts.googleapis.com/css?family=Josefin+Slab:700' rel='stylesheet' type='text/css'>
+<meta charset="UTF-8">
+<title>Cuteness | cute cute cute</title>
+</head>
+<body>
+<div id='container'>
+	<div id='header'>
+		
+	</div><!--header end-->
+		
+		<div id='navigation'>
+		<a href="index.html">Snakes</a> <br>
+		<a href="upload.html">Upload Your Own!</a> <br>
+		<a href="all.html">Uploaded Files</a>
+		</div><!--navigation end-->
+		
+		<div id='about'>
+		<h1>The Whole</h1>
+			<script>
+var fs = require('fs')
+
+var path = '/home/kiri/Code/NODE/public/static/media'
+
+for (var i = 0; i < fs.readdirSync(path).length; i++) {
+	<img src=path+'/'+fs.readdirSync[i] width="400" height="300" align="left" hspace="20">
+};
+			</script>
+	<!--for all the files in static/media, do the above-->
+	<script>
+	$("p").append(<img src = "static/media/pom1.jpg">);
+	</script>
+		<!--about end-->
+	</div>
+	
+</div><!--container end-->
+</body>
+</html>
