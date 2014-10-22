@@ -1,0 +1,43 @@
+/* Physical Computing Final Project
+ * Kiri Strack-Grose
+ * 11.5.2014
+*/
+
+int currentTime = 0;
+int previousTime = 0;
+int val;
+
+//initialize pins
+const int PET1 = A5 ;
+int BUZZ = 4;
+int VIBE = 13;
+
+void setup() {
+  //initialize variables
+  pinMode(PET1, INPUT_PULLUP);
+  pinMode(BUZZ, OUTPUT);
+  pinMode(VIBE, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  val = analogRead(PET1);
+  Serial.println(val);
+  
+  currentTime = millis();
+  if (val < 35 ) {
+    previousTime = currentTime;
+  }
+  
+  if ((currentTime - previousTime) < 28000) {
+    digitalWrite(BUZZ, LOW);
+  } else {
+    digitalWrite(BUZZ, HIGH);
+  }
+
+  if ((currentTime - previousTime) < 2) {
+    digitalWrite(VIBE, HIGH);
+  } else {
+    digitalWrite(VIBE, LOW);
+  }
+}
